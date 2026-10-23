@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,105 +40,201 @@
     @keyframes alertGlow { 0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.85); } 50% { box-shadow: 0 0 50px rgba(220, 38, 38, 1); } }
     .alert-glow { animation: alertGlow 1.2s infinite ease-in-out; }
     .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 10px; }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
   <!-- ================= Header ================= -->
-  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-40">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- โลโก้ -->
       <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition" onclick="location.reload()">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
           <i class="fa-solid fa-user-tie text-white text-lg"></i>
         </div>
         <div>
           <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">AI Mock Interview</span>
-          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">BETA 2.0</span>
+          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">PRO</span>
         </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <button id="btn-api-settings" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-2">
-          <i class="fa-solid fa-gear text-amber-400"></i>
+      
+      <!-- เครื่องมือด้านขวา -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- ปุ่มอัปเกรด (Make Me Money Highlight) -->
+        <a href="#pricing-section" id="btn-header-upgrade" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white shadow-lg shadow-orange-500/40 border border-orange-400 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-crown"></i>
+          <span class="hidden sm:inline">อัปเกรด Premium</span>
+        </a>
+        
+        <button id="btn-api-settings" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 transition flex items-center space-x-2">
+          <i class="fa-solid fa-gear text-slate-400"></i>
           <span class="hidden sm:inline">ตั้งค่า API</span>
         </button>
-        <div id="camera-status-pill" class="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-400">
-          <span class="w-2 h-2 rounded-full bg-slate-500" id="camera-status-dot"></span>
-          <span id="camera-status-text">รอการทำงาน</span>
-        </div>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center relative">
+  <main class="flex-1 w-full relative">
     
     <!-- Background Decor -->
-    <div class="absolute top-10 left-10 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-10 right-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      <div class="absolute top-10 left-10 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-40 right-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl"></div>
+    </div>
 
     <!-- ==========================================
-         ส่วนที่ 1: หน้าเมนูเริ่มต้น (Dynamic Select)
+         ส่วนหน้าแรก (Landing & Pricing) - จะถูกซ่อนเมื่อเข้าสัมภาษณ์
          ========================================== -->
-    <div id="start-menu-section" class="max-w-2xl mx-auto w-full glass-panel rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10 animate-fade-in border-t border-slate-700">
-      <div class="text-center mb-8">
-        <div class="w-20 h-20 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-4xl mx-auto mb-6 border border-indigo-500/30 animate-float shadow-lg shadow-indigo-500/20">
-          <i class="fa-solid fa-bullseye"></i>
-        </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-3">ปรับแต่งการสัมภาษณ์ของคุณ</h1>
-        <p class="text-slate-400 text-sm">ให้ AI สร้างบริบทที่สมจริงที่สุดสำหรับคุณโดยเฉพาะ</p>
-      </div>
+    <div id="landing-view" class="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 relative z-10 animate-fade-in">
       
-      <div class="space-y-6 text-left">
-        <!-- 1. เลือกหมวดหมู่หลัก -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">1. วัตถุประสงค์หลัก:</label>
-          <select id="main-category" class="w-full px-4 py-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <option value="university">สอบเข้าศึกษาต่อ (TCAS / มหาวิทยาลัย)</option>
-            <option value="internship">หาที่ฝึกงาน / สหกิจศึกษา</option>
-            <option value="job">สมัครงานประจำ</option>
-            <option value="personality">พัฒนาบุคลิกภาพทั่วไป</option>
-          </select>
-        </div>
-
-        <!-- 2. เลือกสาขา/รายละเอียด (เปลี่ยนตามหมวดหมู่หลัก) -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">2. คณะ / สายงาน / สาขา:</label>
-          <select id="sub-category" class="w-full px-4 py-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
-            <!-- ข้อมูลจะถูกเติมด้วย JavaScript -->
-          </select>
-        </div>
-
-        <!-- 3. รูปแบบการใช้งาน -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">3. รูปแบบการประเมิน:</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label class="flex items-center p-4 border border-slate-700 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-slate-800/80 transition bg-slate-900/50 group">
-              <input type="radio" name="media-mode" value="video" checked class="form-radio h-5 w-5 text-indigo-600 bg-slate-900 border-slate-600 focus:ring-indigo-500">
-              <div class="ml-3">
-                <div class="text-sm font-bold text-slate-200 group-hover:text-indigo-300 transition">เปิดกล้อง (แนะนำ)</div>
-                <div class="text-[10px] text-slate-400">ประเมินสายตา & ภาษากาย</div>
-              </div>
-            </label>
-            <label class="flex items-center p-4 border border-slate-700 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-slate-800/80 transition bg-slate-900/50 group">
-              <input type="radio" name="media-mode" value="audio" class="form-radio h-5 w-5 text-indigo-600 bg-slate-900 border-slate-600 focus:ring-indigo-500">
-              <div class="ml-3">
-                <div class="text-sm font-bold text-slate-200 group-hover:text-indigo-300 transition">เสียงอย่างเดียว</div>
-                <div class="text-[10px] text-slate-400">ประเมินเนื้อหาคำตอบเท่านั้น</div>
-              </div>
-            </label>
+      <!-- 1. กล่องตั้งค่าเริ่มสัมภาษณ์ -->
+      <div class="max-w-2xl mx-auto w-full glass-panel rounded-3xl p-8 sm:p-10 shadow-[0_0_40px_rgba(0,0,0,0.5)] border-t border-slate-700">
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 text-indigo-400 flex items-center justify-center text-4xl mx-auto mb-6 border border-indigo-500/30 animate-float shadow-lg shadow-indigo-500/20">
+            <i class="fa-solid fa-bullseye"></i>
           </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">จำลองสัมภาษณ์เสมือนจริง</h1>
+          <p class="text-slate-400 text-sm">ให้ AI สร้างบริบทและคำถามที่ตรงกับสายงานของคุณมากที่สุด</p>
         </div>
         
-        <button id="btn-enter-room" class="w-full mt-4 px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-lg transition shadow-xl shadow-indigo-600/30 flex items-center justify-center space-x-3 transform hover:-translate-y-1">
-          <span>เข้าสู่ห้องสัมภาษณ์</span>
-          <i class="fa-solid fa-door-open"></i>
-        </button>
+        <div class="space-y-6 text-left">
+          <!-- 1. หมวดหมู่หลัก -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">1. วัตถุประสงค์การสัมภาษณ์:</label>
+            <select id="main-category" class="w-full px-4 py-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+              <option value="university">สอบเข้าศึกษาต่อ (TCAS / มหาวิทยาลัย)</option>
+              <option value="internship">หาที่ฝึกงาน / สหกิจศึกษา</option>
+              <option value="job">สมัครงานประจำ</option>
+              <option value="personality">พัฒนาบุคลิกภาพทั่วไป</option>
+            </select>
+          </div>
+
+          <!-- 2. สาขา/สายงาน -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">2. คณะ / สายงาน / สาขา <span class="text-amber-400 text-[10px] ml-1 px-1.5 py-0.5 border border-amber-500/30 rounded bg-amber-500/10">PRO</span></label>
+            <select id="sub-category" class="w-full px-4 py-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+              <!-- ข้อมูลจะถูกเติมด้วย JavaScript -->
+            </select>
+          </div>
+
+          <!-- 3. รูปแบบการประเมิน -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 ml-1 mb-2">3. รูปแบบการวิเคราะห์:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center p-4 border border-indigo-500/50 rounded-xl cursor-pointer hover:bg-slate-800/80 transition bg-indigo-900/20 group">
+                <input type="radio" name="media-mode" value="video" checked class="form-radio h-5 w-5 text-indigo-500 bg-slate-900 border-slate-600 focus:ring-indigo-500">
+                <div class="ml-3">
+                  <div class="text-sm font-bold text-indigo-300">เปิดกล้อง (แนะนำ)</div>
+                  <div class="text-[10px] text-slate-400">ประเมินสายตา & ภาษากาย</div>
+                </div>
+              </label>
+              <label class="flex items-center p-4 border border-slate-700 rounded-xl cursor-pointer hover:border-slate-500 hover:bg-slate-800/80 transition bg-slate-900/50 group">
+                <input type="radio" name="media-mode" value="audio" class="form-radio h-5 w-5 text-indigo-500 bg-slate-900 border-slate-600 focus:ring-indigo-500">
+                <div class="ml-3">
+                  <div class="text-sm font-bold text-slate-300 group-hover:text-white">เสียงอย่างเดียว</div>
+                  <div class="text-[10px] text-slate-400">ประเมินเนื้อหาคำตอบเท่านั้น</div>
+                </div>
+              </label>
+            </div>
+          </div>
+          
+          <button id="btn-enter-room" class="w-full mt-4 px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-lg transition shadow-[0_0_20px_rgba(79,70,229,0.4)] flex items-center justify-center space-x-3 transform hover:-translate-y-1 border border-indigo-400/50">
+            <span>เข้าสู่ห้องสัมภาษณ์</span>
+            <i class="fa-solid fa-door-open"></i>
+          </button>
+        </div>
       </div>
+
+      <!-- 2. ส่วนเปรียบเทียบแพ็กเกจ (Make Me Money - Pricing prominently displayed) -->
+      <div id="pricing-section" class="pt-10 scroll-mt-20">
+        <div class="text-center mb-10 space-y-3">
+          <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest shadow-lg">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Unlock Premium Features</span>
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">ปลดล็อกขีดจำกัดการฝึกฝนของคุณ</h2>
+          <p class="text-slate-400 text-sm max-w-xl mx-auto">เลือกแพ็กเกจที่เหมาะสมเพื่อเข้าถึงคลังคำถามเจาะลึกรายคณะ และระบบ AI กรรมการที่แม่นยำยิ่งขึ้น</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto items-center">
+          
+          <!-- แผน 1: Basic (Free) -->
+          <div class="glass-panel rounded-3xl p-8 border border-slate-700 flex flex-col h-full opacity-90 hover:opacity-100 transition duration-300">
+            <div class="mb-6">
+              <span class="text-slate-400 font-bold uppercase tracking-wider text-sm">Basic</span>
+              <div class="text-4xl font-black text-white mt-2">ฟรี <span class="text-sm font-medium text-slate-500">/ เสมอ</span></div>
+            </div>
+            <ul class="space-y-4 text-sm text-slate-300 flex-1 mb-8">
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i><span>ซ้อมสัมภาษณ์จำกัด 1 ครั้ง/วัน</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i><span>วิเคราะห์ภาษากายขั้นพื้นฐาน</span></li>
+              <li class="flex items-start space-x-3 text-slate-600"><i class="fa-solid fa-xmark mt-1"></i><span>ล็อกคำถามเฉพาะทางรายคณะ</span></li>
+              <li class="flex items-start space-x-3 text-slate-600"><i class="fa-solid fa-xmark mt-1"></i><span>ไม่สามารถโหลดรายงาน PDF ได้</span></li>
+            </ul>
+            <button disabled class="w-full py-3 rounded-xl bg-slate-800 text-slate-500 font-bold border border-slate-700 cursor-not-allowed">
+              แผนปัจจุบัน
+            </button>
+          </div>
+
+          <!-- แผน 2: Pro Student (Highlight) -->
+          <div class="bg-gradient-to-b from-indigo-900 to-slate-900 rounded-3xl p-8 border-2 border-indigo-500 shadow-[0_0_30px_rgba(79,70,229,0.3)] flex flex-col h-full transform md:scale-110 relative z-10">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg shadow-indigo-500/50 uppercase tracking-widest border border-indigo-300">
+              ยอดนิยมสูงสุด
+            </div>
+            <div class="mb-6 mt-2">
+              <span class="text-indigo-300 font-bold uppercase tracking-wider text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-rocket"></i> <span>Pro Student</span>
+              </span>
+              <div class="text-4xl font-black text-white mt-2">199.- <span class="text-sm font-medium text-slate-400">/ เดือน</span></div>
+            </div>
+            <ul class="space-y-4 text-sm text-slate-200 flex-1 mb-8">
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check-circle text-emerald-400 mt-1 text-lg"></i><span class="font-bold text-white">ซ้อมสัมภาษณ์ได้ไม่จำกัดรอบ</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i><span>ปลดล็อกคลังคำถาม 500+ ข้อ ทุกคณะ</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i><span>วิเคราะห์น้ำเสียงและความเร็วการพูด</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-emerald-400 mt-1"></i><span>ดาวน์โหลดรายงานสรุปผล PDF</span></li>
+            </ul>
+            <button onclick="handleUpgradePlan('Pro Student')" class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold shadow-lg shadow-indigo-600/40 transition transform hover:-translate-y-1 border border-indigo-400">
+              สมัครสมาชิก Pro
+            </button>
+          </div>
+
+          <!-- แผน 3: VIP Lifetime -->
+          <div class="bg-black/80 backdrop-blur-md rounded-3xl p-8 border border-amber-600/50 flex flex-col h-full shadow-[0_0_20px_rgba(217,119,6,0.15)] relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 text-amber-500/10 text-9xl"><i class="fa-solid fa-crown"></i></div>
+            <div class="mb-6 relative z-10">
+              <span class="text-amber-500 font-bold uppercase tracking-wider text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-gem"></i> <span>VIP Lifetime</span>
+              </span>
+              <div class="text-4xl font-black text-white mt-2">499.- <span class="text-sm font-medium text-slate-500">/ ตลอดชีพ</span></div>
+            </div>
+            <ul class="space-y-4 text-sm text-slate-300 flex-1 mb-8 relative z-10">
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-amber-400 mt-1"></i><span>ทุกความสามารถในแพ็กเกจ Pro</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-amber-400 mt-1"></i><span>จำลองกรรมการ 3 ท่านกดดันพร้อมกัน</span></li>
+              <li class="flex items-start space-x-3"><i class="fa-solid fa-check text-amber-400 mt-1"></i><span>ระบบให้ AI ช่วยตรวจทาน Portfolio</span></li>
+            </ul>
+            <button onclick="handleUpgradePlan('VIP Lifetime')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold border border-amber-600/50 transition hover:border-amber-400 shadow-lg relative z-10">
+              ซื้อครั้งเดียวจบ
+            </button>
+          </div>
+
+        </div>
+        
+        <div class="mt-12 text-center text-xs text-slate-500 flex flex-wrap justify-center items-center gap-6">
+          <span class="flex items-center space-x-1.5"><i class="fa-solid fa-shield-halved text-emerald-500"></i><span>ชำระเงินปลอดภัย 100%</span></span>
+          <span class="flex items-center space-x-1.5"><i class="fa-solid fa-arrows-rotate text-indigo-400"></i><span>ยกเลิกรายเดือนได้ทุกเมื่อ</span></span>
+          <span class="flex items-center space-x-1.5"><i class="fa-solid fa-users text-violet-400"></i><span>นักเรียนและนักศึกษากว่า 12,000+ คนไว้วางใจ</span></span>
+        </div>
+      </div>
+
     </div>
 
     <!-- ==========================================
          ส่วนที่ 2: หน้าจอห้องสัมภาษณ์ (Interview View)
          ========================================== -->
-    <div id="interview-section" class="hidden space-y-6 relative z-10 w-full max-w-5xl mx-auto">
+    <div id="interview-section" class="hidden py-8 px-4 w-full max-w-5xl mx-auto space-y-6 relative z-10">
       
       <!-- กล่องคำถาม -->
       <div class="glass-panel border-indigo-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -160,7 +256,7 @@
       </div>
 
       <!-- จอกล้อง -->
-      <div class="relative w-full aspect-video md:h-[500px] bg-slate-900 rounded-3xl overflow-hidden border border-slate-700 shadow-2xl flex items-center justify-center">
+      <div class="relative w-full aspect-video md:h-[500px] bg-black rounded-3xl overflow-hidden border-2 border-slate-800 shadow-2xl flex items-center justify-center">
         
         <video id="webcam" autoplay playsinline muted class="mirror w-full h-full object-cover hidden"></video>
         <canvas id="output-canvas" class="mirror absolute inset-0 w-full h-full pointer-events-none hidden"></canvas>
@@ -171,7 +267,7 @@
           </div>
           <div class="space-y-2">
             <h3 id="placeholder-title" class="text-xl font-bold text-white">กำลังขอสิทธิ์เข้าถึงอุปกรณ์...</h3>
-            <p id="placeholder-desc" class="text-sm text-slate-400 max-w-md mx-auto">ระบบใช้ Edge Computing ประมวลผลบนเครื่องของคุณ 100% ปลอดภัยและเป็นส่วนตัว</p>
+            <p id="placeholder-desc" class="text-sm text-slate-400 max-w-md mx-auto">ระบบประมวลผลบนเครื่องของคุณ 100% ปลอดภัยและเป็นส่วนตัว</p>
           </div>
         </div>
 
@@ -180,6 +276,7 @@
           <span class="text-lg font-bold tracking-wide">กรุณามองกล้อง!</span>
         </div>
 
+        <!-- HUD Bar (ซ้าย-ขวา บนจอ) -->
         <div class="absolute top-5 left-5 right-5 flex items-center justify-between pointer-events-none z-20">
           <div id="hud-gaze-status" class="px-4 py-2 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-xs font-semibold flex items-center space-x-2 shadow-lg">
             <span id="gaze-indicator-dot" class="w-3 h-3 rounded-full bg-slate-400"></span>
@@ -191,7 +288,7 @@
           </div>
         </div>
 
-        <!-- ซับไตเติลเสียง -->
+        <!-- ซับไตเติลเสียง (ด้านล่างจอ) -->
         <div class="absolute bottom-8 left-6 right-6 z-20 pointer-events-none text-center flex flex-col items-center">
           <div id="speech-status-pill" class="mb-3 text-[10px] px-3 py-1 rounded-full bg-black/60 border border-white/10 text-slate-300 backdrop-blur-sm shadow-sm flex items-center space-x-2 hidden">
             <i id="mic-icon" class="fa-solid fa-microphone-slash"></i>
@@ -203,9 +300,9 @@
         </div>
       </div>
 
-      <!-- ปุ่มควบคุม -->
+      <!-- ปุ่มควบคุมการสัมภาษณ์ -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4">
-        <button id="btn-start-interview" class="w-full sm:w-64 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-lg shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center space-x-3 border border-emerald-400/30">
+        <button id="btn-start-interview" class="w-full sm:w-64 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-lg shadow-[0_0_20px_rgba(16,185,129,0.4)] transition transform hover:-translate-y-1 flex items-center justify-center space-x-3 border border-emerald-400/30">
           <i class="fa-solid fa-play"></i>
           <span>เริ่มสัมภาษณ์</span>
         </button>
@@ -219,7 +316,7 @@
     <!-- ==========================================
          ส่วนที่ 3: หน้าแดชบอร์ดสรุปผล
          ========================================== -->
-    <div id="dashboard-section" class="hidden space-y-8 animate-fade-in relative z-10 w-full max-w-6xl mx-auto">
+    <div id="dashboard-section" class="hidden py-8 px-4 w-full max-w-6xl mx-auto space-y-8 animate-fade-in relative z-10">
       
       <div class="text-center space-y-3 mt-4">
         <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm font-bold shadow-lg shadow-emerald-500/10">
@@ -230,11 +327,12 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        
         <!-- 1. การ์ดสายตา -->
         <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between">
           <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl"></div>
           <div>
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-6 relative z-10">
               <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
                   <i class="fa-solid fa-eye text-xl"></i>
@@ -246,7 +344,7 @@
               </div>
             </div>
 
-            <div class="my-8 flex items-center justify-center relative">
+            <div class="my-8 flex items-center justify-center relative z-10">
               <div class="relative w-48 h-48 flex items-center justify-center">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="6" class="text-slate-800" fill="transparent" />
@@ -254,12 +352,12 @@
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                   <span id="report-eye-percentage" class="text-5xl font-black text-white">0%</span>
-                  <span class="text-xs font-semibold text-slate-400 mt-1" id="report-eye-label">มองกล้อง</span>
+                  <span class="text-xs font-semibold text-slate-400 mt-1" id="report-eye-label">เวลามองกล้อง</span>
                 </div>
               </div>
             </div>
 
-            <div class="bg-slate-950/60 rounded-2xl p-5 border border-slate-700 shadow-inner">
+            <div class="bg-slate-950/60 rounded-2xl p-5 border border-slate-700 shadow-inner relative z-10">
               <div class="font-bold text-indigo-300 flex items-center space-x-2 mb-2">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span>ข้อเสนอแนะด้านบุคลิกภาพ</span>
@@ -269,10 +367,10 @@
           </div>
         </div>
 
-        <!-- 2. การ์ดคำตอบ -->
+        <!-- 2. การ์ดคำตอบ AI -->
         <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between">
           <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
-          <div>
+          <div class="relative z-10">
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
@@ -280,12 +378,12 @@
                 </div>
                 <div>
                   <h3 class="text-xl font-bold text-white">การประเมินเนื้อหา</h3>
-                  <p class="text-xs text-emerald-300">Gemini AI Answer Evaluation</p>
+                  <p class="text-xs text-emerald-300">Gemini AI Evaluation</p>
                 </div>
               </div>
-              <div class="bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-700 shadow-inner">
+              <div class="bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-700 shadow-inner flex items-baseline">
                 <span id="report-llm-score" class="text-4xl font-black text-emerald-400">--</span>
-                <span class="text-slate-400 font-bold">/10</span>
+                <span class="text-slate-400 font-bold ml-1">/10</span>
               </div>
             </div>
 
@@ -303,51 +401,26 @@
                 <span id="llm-loading-badge" class="hidden text-[10px] px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 animate-pulse">กำลังคิด...</span>
               </div>
               <div id="report-llm-feedback" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line">
-                กำลังรอส่งคำตอบ...
+                กำลังรอประเมินผล...
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ปุ่ม Action ขนาดใหญ่สุดในหน้า -->
+      <!-- ปุ่ม Action ขนาดใหญ่ในหน้าแดชบอร์ด -->
       <div class="mt-8 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-        <!-- ปุ่มจำลองโหลด PDF -->
-        <button id="btn-download-pdf" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-base font-bold transition flex items-center justify-center space-x-3 border border-slate-600">
+        <!-- ปุ่มจำลองโหลด PDF (Upsell) -->
+        <button id="btn-download-pdf" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-base font-bold transition flex items-center justify-center space-x-3 border border-slate-600 shadow-lg">
           <i class="fa-solid fa-file-pdf text-rose-400"></i>
           <span>โหลดรายงาน PDF</span>
           <span class="text-[9px] bg-amber-500 text-black px-1.5 py-0.5 rounded font-black ml-1">PRO</span>
         </button>
-        <!-- ปุ่มเริ่มใหม่ (ใหญ่พิเศษ) -->
-        <button id="btn-restart-interview" class="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg font-black shadow-xl shadow-indigo-600/30 transition-all transform hover:scale-105 flex items-center justify-center space-x-3">
+        <!-- ปุ่มเริ่มใหม่ ใหญ่พิเศษ -->
+        <button id="btn-restart-interview" class="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg font-black shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all transform hover:scale-105 flex items-center justify-center space-x-3 border border-indigo-400">
           <i class="fa-solid fa-rotate-left"></i>
           <span>ฝึกซ้อมคำถามใหม่</span>
         </button>
-      </div>
-
-      <!-- Monetization UI ย่อให้เล็กลงอยู่ด้านล่าง -->
-      <div class="mt-12 opacity-90 hover:opacity-100 transition duration-300">
-        <div class="text-center mb-6">
-          <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold">
-            <i class="fa-solid fa-crown"></i> <span>Premium Feature</span>
-          </span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-          <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-700 flex justify-between items-center">
-            <div>
-              <h4 class="font-bold text-white">Pro Student</h4>
-              <p class="text-xs text-slate-400 mt-1">คำถาม 500+ ข้อ พร้อมโหลด PDF</p>
-            </div>
-            <button onclick="handleUpgradePlan('Pro Student')" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">199.- /เดือน</button>
-          </div>
-          <div class="bg-slate-900/60 rounded-2xl p-5 border border-slate-700 flex justify-between items-center">
-            <div>
-              <h4 class="font-bold text-white">VIP Lifetime</h4>
-              <p class="text-xs text-slate-400 mt-1">สัมภาษณ์กรรมการ 3 ท่าน + ตรวจพอร์ต</p>
-            </div>
-            <button onclick="handleUpgradePlan('VIP Lifetime')" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-bold transition">499.- /ตลอดชีพ</button>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -364,7 +437,7 @@
         <button id="btn-close-modal" class="text-slate-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p class="text-sm text-slate-400 leading-relaxed">
-        ใส่ <b>Gemini API Key</b> เพื่อให้ AI วิเคราะห์คำตอบจริง (รับคีย์ฟรีที่ Google AI Studio) หากไม่ใส่ ระบบจะจำลองผลคะแนนเบื้องต้นแทน
+        ใส่ <b>Gemini API Key</b> (ฟรีจาก Google AI Studio) เพื่อประเมินผลเนื้อหาจริง หากไม่ใส่ ระบบจะจำลองผลคะแนนเบื้องต้นแทน
       </p>
       <div class="space-y-2">
         <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full px-5 py-3 rounded-xl bg-black border border-slate-700 text-white focus:outline-none focus:border-indigo-500 shadow-inner">
@@ -385,27 +458,27 @@
 
   <!-- ================= Script ================= -->
   <script>
-    // --- 1. ข้อมูลสำหรับ Dynamic Dropdowns ---
+    // --- 1. ข้อมูลสำหรับ Dynamic Dropdowns (คำถามเจาะลึก) ---
     const categoryData = {
       "university": {
-        "eng": { label: "คณะวิศวกรรมศาสตร์", questions: ["ทำไมถึงสนใจวิศวกรรมศาสตร์?", "เล่าโปรเจกต์เชิงเทคนิคที่คุณเคยทำ?", "คุณมีวิธีรับมือกับปัญหาที่แก้ไม่ตกอย่างไร?"] },
-        "med": { label: "คณะแพทยศาสตร์/พยาบาล", questions: ["ทำไมถึงอยากเป็นบุคลากรทางการแพทย์?", "คุณจัดการกับความเครียดสูงอย่างไร?", "ถ้าเจอสถานการณ์ฉุกเฉิน คุณจะตัดสินใจอย่างไร?"] },
-        "biz": { label: "คณะบริหารธุรกิจ/บัญชี", questions: ["อะไรคือคุณสมบัติของผู้นำที่ดี?", "คุณมีความสนใจในธุรกิจประเภทไหน?", "เล่าประสบการณ์การทำงานเป็นทีมของคุณ"] }
+        "eng": { label: "คณะวิศวกรรมศาสตร์", questions: ["ทำไมถึงสนใจเรียนวิศวกรรมศาสตร์?", "เล่าโปรเจกต์เชิงเทคนิคที่คุณเคยทำหรือสนใจ?", "หากคุณต้องออกแบบระบบเพื่อแก้ปัญหารถติด คุณจะเริ่มจากอะไร?", "คุณมีวิธีรับมือกับโจทย์ปัญหาที่แก้ไม่ตกอย่างไร?"] },
+        "med": { label: "คณะแพทยศาสตร์/พยาบาล/สาธารณสุข", questions: ["ทำไมถึงอยากเป็นบุคลากรทางการแพทย์?", "คุณจัดการกับความกดดันและความเครียดสูงอย่างไร?", "ถ้าเจอผู้ป่วยที่กำลังหงุดหงิด คุณจะรับมืออย่างไร?", "คุณคิดว่า AI จะมาแทนที่หมอได้ไหมในอนาคต?"] },
+        "biz": { label: "คณะบริหารธุรกิจ/บัญชี/เศรษฐศาสตร์", questions: ["อะไรคือคุณสมบัติของผู้นำที่ดีในความคิดคุณ?", "ถ้าให้คุณตั้งธุรกิจตอนนี้ 1 อย่าง คุณจะขายอะไรเพราะอะไร?", "เล่าประสบการณ์การทำงานเป็นทีม และปัญหาที่เคยพบ"] }
       },
       "internship": {
-        "dev": { label: "สาย Tech / Software Dev", questions: ["ภาษาโปรแกรมไหนที่คุณถนัดที่สุด เพราะอะไร?", "วิธีหา Bug ในโค้ดที่คุณเขียนเองทำอย่างไร?", "อยากได้ประสบการณ์อะไรจากการฝึกงานครั้งนี้?"] },
-        "mkt": { label: "สาย Marketing / Content", questions: ["เทรนด์การตลาดไหนที่คุณกำลังสนใจ?", "คุณมีวิธีสร้างคอนเทนต์ให้น่าสนใจอย่างไร?", "เล่าถึงแคมเปญที่คุณคิดว่าประสบความสำเร็จ"] }
+        "dev": { label: "สาย Tech / Software Developer", questions: ["ภาษาโปรแกรมไหนที่คุณถนัดที่สุด เพราะอะไร?", "วิธีหา Bug ในโค้ดที่คุณเขียนเองทำอย่างไร?", "อธิบายแนวคิดแบบ Object-Oriented Programming (OOP) ให้ฟังหน่อย", "อยากได้ประสบการณ์อะไรจากการฝึกงานครั้งนี้?"] },
+        "mkt": { label: "สาย Marketing / Content", questions: ["เทรนด์การตลาดไหนในปัจจุบันที่คุณกำลังสนใจ?", "คุณมีวิธีคิดคอนเทนต์ให้น่าสนใจและต่างจากคู่แข่งอย่างไร?", "เล่าถึงแคมเปญโฆษณาที่คุณชอบ และคิดว่าทำไมถึงสำเร็จ"] }
       },
       "job": {
-        "it": { label: "IT Support / System Admin", questions: ["ถ้า User แจ้งว่าเปิดคอมไม่ติด คุณจะเริ่มเช็กจากอะไร?", "เล่าประสบการณ์แก้ปัญหา Network ให้ฟังหน่อย", "คุณมีวิธีสื่อสารเรื่องเทคนิคยากๆ ให้คนทั่วไปเข้าใจอย่างไร?"] },
-        "gen": { label: "ตำแหน่งทั่วไป (General)", questions: ["ทำไมถึงอยากร่วมงานกับบริษัทเรา?", "จุดเด่นที่ทำให้เราควรเลือกคุณคืออะไร?", "เป้าหมายในอีก 3 ปีข้างหน้าของคุณคืออะไร?"] }
+        "it": { label: "IT Support / System Admin / Automation", questions: ["ถ้า User แจ้งว่าเปิดคอมไม่ติด คุณจะเริ่มเช็กจากอะไรเป็นลำดับแรก?", "เล่าประสบการณ์แก้ปัญหาระบบ Network หรือ Hardware ให้ฟังหน่อย", "คุณมีวิธีสื่อสารเรื่องเทคนิคยากๆ ให้คนทั่วไปเข้าใจอย่างไร?", "เล่าโปรเจกต์ Automation ที่คุณภูมิใจที่สุด"] },
+        "gen": { label: "ตำแหน่งทั่วไป (General/HR/Admin)", questions: ["ทำไมถึงอยากร่วมงานกับบริษัทเรา?", "จุดเด่นที่ทำให้เราควรเลือกคุณเข้าทำงานคืออะไร?", "เป้าหมายในอีก 3-5 ปีข้างหน้าของคุณคืออะไร?", "คุณคิดว่าความสำเร็จในการทำงานคืออะไร?"] }
       },
       "personality": {
-        "talk": { label: "ทักษะการสื่อสารทั่วไป", questions: ["แนะนำตัวเองสั้นๆ ให้น่าสนใจ", "คุณมีงานอดิเรกอะไรที่ช่วยพัฒนาตัวเอง?", "เรื่องที่คุณรู้สึกภูมิใจที่สุดในสัปดาห์ที่ผ่านมาคืออะไร?"] }
+        "talk": { label: "ทดสอบทักษะการสื่อสารทั่วไป", questions: ["แนะนำตัวเองสั้นๆ ให้น่าสนใจภายใน 1 นาที", "คุณมีงานอดิเรกอะไรที่ช่วยพัฒนาตัวเอง?", "เรื่องที่คุณรู้สึกภูมิใจที่สุดในสัปดาห์ที่ผ่านมาคืออะไร?", "ถ้าคุณมีพลังวิเศษ 1 อย่าง คุณอยากมีอะไรและจะเอาไปทำอะไร?"] }
       }
     };
 
-    // --- State ตัวแปร ---
+    // --- State Variables ---
     let activeApiKey = localStorage.getItem("ai_mock_api_key") || "";
     let useCameraMode = true;
     let currentQuestions = [];
@@ -416,12 +489,12 @@
     let interviewSeconds = 0, totalInterviewTimeSec = 0, totalLookedTimeSec = 0, consecutiveNotLookedSec = 0;
     let lastFrameTimestamp = null, interviewTimerInterval = null, speechRecognition = null, finalTranscript = "";
 
-    // --- DOM Elements ---
+    // --- DOM Elements Reference ---
     const mainCategory = document.getElementById('main-category'), subCategory = document.getElementById('sub-category');
-    const btnEnterRoom = document.getElementById('btn-enter-room'), startMenuSection = document.getElementById('start-menu-section');
-    const interviewSection = document.getElementById('interview-section'), dashboardSection = document.getElementById('dashboard-section');
+    const btnEnterRoom = document.getElementById('btn-enter-room');
+    const landingView = document.getElementById('landing-view'), interviewSection = document.getElementById('interview-section'), dashboardSection = document.getElementById('dashboard-section');
     
-    // --- ฟังก์ชันอัปเดต Dropdown ที่ 2 ---
+    // --- Update Dynamic Sub-Categories ---
     function updateSubCategories() {
       const mainVal = mainCategory.value;
       const subObj = categoryData[mainVal];
@@ -433,25 +506,38 @@
       }
     }
     mainCategory.addEventListener('change', updateSubCategories);
-    updateSubCategories(); // โหลดครั้งแรก
+    updateSubCategories(); // Run on load
 
-    // --- เข้าสู่ห้องสัมภาษณ์ ---
+    // --- Smooth Scroll (ซ่อนแถบเมื่อโหลดเพื่อให้ Header ไม่บัง) ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // --- Enter Room Logic ---
     btnEnterRoom.addEventListener('click', () => {
       const main = mainCategory.value, sub = subCategory.value;
       currentInterviewContext = categoryData[main][sub].label;
       currentQuestions = categoryData[main][sub].questions;
-      currentQuestionIndex = 0;
+      
+      // สุ่มคำถามแรก
+      currentQuestionIndex = Math.floor(Math.random() * currentQuestions.length);
       
       document.getElementById('question-badge').textContent = currentInterviewContext;
       document.getElementById('current-question').textContent = `"${currentQuestions[currentQuestionIndex]}"`;
 
       useCameraMode = document.querySelector('input[name="media-mode"]:checked').value === 'video';
       
-      startMenuSection.classList.add('hidden');
+      // เปลี่ยนหน้าจอ (ซ่อนหน้าแรกรวมถึง Pricing)
+      landingView.classList.add('hidden');
+      document.getElementById('btn-header-upgrade').classList.add('hidden'); // ซ่อนปุ่ม Pro ด้านบนชั่วคราวขณะสัมภาษณ์
       interviewSection.classList.remove('hidden');
       
-      if (useCameraMode) { initWebcam(); } 
-      else { setupAudioOnlyMode(); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (useCameraMode) { initWebcam(); } else { setupAudioOnlyMode(); }
     });
 
     function setupAudioOnlyMode() {
@@ -463,10 +549,10 @@
       icon.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
       icon.className = "w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500/30 flex items-center justify-center text-blue-400 text-3xl animate-pulse";
       document.getElementById('placeholder-title').textContent = "โหมดสัมภาษณ์ด้วยเสียง (ปิดกล้อง)";
-      document.getElementById('placeholder-desc').textContent = "ระบบจะวิเคราะห์เฉพาะเนื้อหาคำตอบของคุณ เหมาะสำหรับผู้ที่ไม่สะดวกเปิดกล้อง";
+      document.getElementById('placeholder-desc').textContent = "ระบบจะวิเคราะห์เนื้อหาคำตอบและน้ำเสียงเท่านั้น โดยข้ามการให้คะแนนภาษากาย";
     }
 
-    // --- ระบบกล้อง & MediaPipe ---
+    // --- Webcam & MediaPipe Face Mesh ---
     async function initWebcam() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
@@ -488,6 +574,7 @@
         };
       } catch (err) {
         showToast("เปิดกล้องไม่ได้ กรุณารีเฟรชแล้วเลือก 'เสียงอย่างเดียว'", "fa-triangle-exclamation");
+        setupAudioOnlyMode(); // Fallback
       }
     }
 
@@ -508,7 +595,7 @@
             updateGaze(true);
           } else {
             consecutiveNotLookedSec += dt; updateGaze(false);
-            if (consecutiveNotLookedSec >= 3.0) { document.getElementById('eye-warning').classList.remove('hidden'); showToast("กรุณามองกล้อง!", "fa-eye"); }
+            if (consecutiveNotLookedSec >= 3.0) { document.getElementById('eye-warning').classList.remove('hidden'); }
           }
         } else updateGaze(isLooking);
       } else {
@@ -522,13 +609,13 @@
       if (custom) { dot.className="w-3 h-3 rounded-full bg-amber-500"; lbl.textContent = custom; return; }
       if (!isInterviewActive) { dot.className="w-3 h-3 rounded-full bg-slate-400"; lbl.textContent = "รอสัมภาษณ์"; return; }
       if (isLooking) { dot.className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"; lbl.textContent = "สบตากล้อง 👀"; }
-      else { dot.className="w-3 h-3 rounded-full bg-amber-400"; lbl.textContent = `หลบตา (${Math.max(0, 3-consecutiveNotLookedSec).toFixed(1)}s)`; }
+      else { dot.className="w-3 h-3 rounded-full bg-amber-400"; lbl.textContent = `หลบสายตา (${Math.max(0, 3-consecutiveNotLookedSec).toFixed(1)}s)`; }
     }
 
-    // --- ระบบเสียง (Speech) ---
+    // --- ระบบเสียง (Speech-to-Text) ---
     function initSpeech() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) { document.getElementById('transcript-preview').textContent = "เบราว์เซอร์ไม่รองรับไมค์ (แนะนำ Chrome)"; return null; }
+      if (!SR) { document.getElementById('transcript-preview').textContent = "เบราว์เซอร์ไม่รองรับไมค์ (แนะนำใช้ Chrome)"; return null; }
       const rec = new SR(); rec.lang = 'th-TH'; rec.continuous = true; rec.interimResults = true;
       rec.onstart = () => { document.getElementById('speech-status-pill').classList.remove('hidden'); document.getElementById('mic-icon').className="fa-solid fa-microphone text-emerald-400 animate-pulse"; document.getElementById('mic-status-text').textContent="กำลังฟัง..."; };
       rec.onresult = (e) => {
@@ -540,50 +627,57 @@
       return rec;
     }
 
-    // --- ประเมิน LLM ---
+    // --- AI Evaluation Logic (LLM API) ---
     async function evaluateLLM(question, answer) {
       const fb = document.getElementById('report-llm-feedback'), sc = document.getElementById('report-llm-score'), bg = document.getElementById('llm-loading-badge');
-      bg.classList.remove('hidden'); fb.innerHTML = '<span class="text-indigo-400 animate-pulse">AI กำลังวิเคราะห์...</span>';
+      bg.classList.remove('hidden'); fb.innerHTML = '<span class="text-indigo-400 animate-pulse">คณะกรรมการ AI กำลังวิเคราะห์คำตอบ...</span>';
       
-      if(!answer.trim()) { bg.classList.add('hidden'); sc.textContent="0"; sc.className="text-4xl font-black text-rose-500"; fb.textContent="ไม่พบเสียงตอบคำถาม"; return; }
+      if(!answer.trim()) { bg.classList.add('hidden'); sc.textContent="0"; sc.className="text-4xl font-black text-rose-500"; fb.textContent="ไม่พบเสียงตอบคำถาม กรุณาลองใหม่อีกครั้ง"; return; }
+      
       if(!activeApiKey) {
         setTimeout(()=>{
           const len = answer.length; let s=7, d="";
-          if(len<30) { s=5.5; d="สั้นไป ควรยกตัวอย่างเพิ่ม"; } else if(len<80){ s=7.5; d="ตอบตรงประเด็น แต่เพิ่มความมั่นใจได้อีก"; } else { s=9; d="ยอดเยี่ยม ตอบได้ชัดเจนมาก"; }
-          displayLLM(s, `(ใช้ระบบออฟไลน์)\n${d}`);
-        }, 1200); return;
+          if(len<30) { s=5.5; d="คำตอบสั้นเกินไป ควรยกตัวอย่างประสบการณ์จริงเพื่อเสริมความน่าเชื่อถือให้มากขึ้น"; } else if(len<80){ s=7.5; d="ตอบได้ตรงประเด็นดีครับ หากเพิ่มความมั่นใจและการอธิบายเป้าหมายในอนาคตจะสมบูรณ์แบบ"; } else { s=9; d="ยอดเยี่ยมมาก! ตอบได้ชัดเจน มีโครงสร้างความคิดที่ดี และแสดงออกถึงทัศนคติเชิงบวก"; }
+          displayLLM(s, `(ใช้ระบบออฟไลน์จำลองเนื่องจากไม่ได้ใส่ API Key)\n\n${d}`);
+        }, 1500); return;
       }
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`, {
           method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({contents:[{parts:[{text: `เป้าหมาย: ${currentInterviewContext}\nคำถาม: "${question}"\nคำตอบ: "${answer}"\nประเมินเต็ม 10 และแนะนำ 2-3 ประโยค`}]}]})
+          body: JSON.stringify({contents:[{parts:[{text: `คุณคืออาจารย์สอบสัมภาษณ์สาย ${currentInterviewContext}\nคำถาม: "${question}"\nคำตอบผู้สมัคร: "${answer}"\n\nคำสั่ง: ให้ประเมินคำตอบนี้เป็นคะแนนเต็ม 10 (ต้องมีรูปแบบ x/10) และเขียนคำแนะนำสั้นๆ 2-3 ประโยคเพื่อนำไปปรับปรุง`}]}]})
         });
         const data = await res.json();
         const txt = data.candidates[0].content.parts[0].text;
         const match = txt.match(/(\d+(\.\d+)?)\s*\/\s*10/) || txt.match(/\b([1-9]|10)\b/);
         displayLLM(match ? match[1] : "8", txt);
-      } catch(e) { displayLLM(7, "API Error: ประเมินด้วยระบบออฟไลน์แทน\nตอบได้ดี ควรฝึกฝนเพิ่ม"); }
+      } catch(e) { displayLLM(7, "API Error: ประเมินด้วยระบบสำรอง\nคำตอบดี ควรฝึกฝนเพิ่มเติมให้คล่องแคล่วขึ้น"); }
     }
+
     function displayLLM(score, txt) {
       document.getElementById('llm-loading-badge').classList.add('hidden');
       const sc = document.getElementById('report-llm-score'); sc.textContent = score;
-      if(parseFloat(score)>=8) sc.className="text-4xl font-black text-emerald-400"; else if(parseFloat(score)>=6) sc.className="text-4xl font-black text-amber-400"; else sc.className="text-4xl font-black text-rose-400";
+      if(parseFloat(score)>=8) sc.className="text-4xl font-black text-emerald-400 drop-shadow-md"; else if(parseFloat(score)>=6) sc.className="text-4xl font-black text-amber-400 drop-shadow-md"; else sc.className="text-4xl font-black text-rose-400 drop-shadow-md";
       document.getElementById('report-llm-feedback').textContent = txt;
     }
 
-    // --- Controls ---
+    // --- Start / Stop Logic ---
     const btnStart = document.getElementById('btn-start-interview'), btnEnd = document.getElementById('btn-end-interview');
+    
+    // Play Sound Effect
+    const audioBeep = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3'); 
+    
     btnStart.addEventListener('click', () => {
+      audioBeep.play().catch(e=>{}); // เล่นเสียง
       isInterviewActive = true; interviewSeconds=0; totalInterviewTimeSec=0; totalLookedTimeSec=0; consecutiveNotLookedSec=0; finalTranscript=""; document.getElementById('transcript-preview').textContent="";
       btnStart.disabled = true; btnStart.className = "w-full sm:w-64 px-6 py-4 rounded-2xl bg-slate-800 text-slate-500 font-bold border border-slate-700 cursor-not-allowed flex justify-center items-center space-x-3";
-      btnEnd.disabled = false; btnEnd.className = "w-full sm:w-64 px-6 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 text-white font-bold shadow-xl shadow-red-500/20 flex justify-center items-center space-x-3 animate-pulse-fast";
+      btnEnd.disabled = false; btnEnd.className = "w-full sm:w-64 px-6 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 text-white font-bold shadow-[0_0_20px_rgba(225,29,72,0.4)] flex justify-center items-center space-x-3 animate-pulse-fast transition transform hover:-translate-y-1";
       
       clearInterval(interviewTimerInterval);
       interviewTimerInterval = setInterval(() => { interviewSeconds++; document.getElementById('timer-display').textContent = `${String(Math.floor(interviewSeconds/60)).padStart(2,'0')}:${String(interviewSeconds%60).padStart(2,'0')}`; }, 1000);
       
       if(!speechRecognition) speechRecognition = initSpeech();
       if(speechRecognition) try{speechRecognition.start();}catch(e){}
-      showToast("เริ่มสัมภาษณ์แล้ว! พูดใส่ไมค์ได้เลย", "fa-play");
+      showToast("เริ่มสัมภาษณ์แล้ว! กรุณาตอบคำถาม", "fa-play");
     });
 
     btnEnd.addEventListener('click', () => {
@@ -592,20 +686,24 @@
       if(cameraStream && useCameraMode) cameraStream.getTracks().forEach(t=>t.stop());
       
       interviewSection.classList.add('hidden'); dashboardSection.classList.remove('hidden');
-      try{confetti({particleCount:100, spread:80, origin:{y:0.5}});}catch(e){}
+      document.getElementById('btn-header-upgrade').classList.remove('hidden'); // แสดงปุ่ม Pro ด้านบนกลับมา
+      
+      try{confetti({particleCount:120, spread:90, origin:{y:0.6}});}catch(e){}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
+      // สรุปข้อมูลสายตา
       const pBar = document.getElementById('circle-progress'), lbl = document.getElementById('report-eye-percentage'), fbk = document.getElementById('report-eye-feedback');
       if(useCameraMode) {
         const pct = Math.min(100, Math.round((totalLookedTimeSec/Math.max(totalInterviewTimeSec,1))*100));
         lbl.textContent = `${pct}%`; pBar.style.strokeDashoffset = (2*Math.PI*40)*(1-pct/100);
-        if(pct>=75){ pBar.className="text-emerald-500 transition-all duration-1000"; fbk.textContent="ดีเยี่ยม! คุณมองกล้องได้อย่างมั่นใจและเป็นธรรมชาติ"; }
-        else if(pct>=50){ pBar.className="text-amber-500 transition-all duration-1000"; fbk.textContent="ทำได้ดีปานกลาง พยายามโฟกัสเลนส์กล้องเวลาพูดให้มากขึ้น"; }
-        else { pBar.className="text-rose-500 transition-all duration-1000"; fbk.textContent="คุณหลบสายตาบ่อยเกินไป อาจทำให้เสียคะแนนบุคลิกภาพได้"; }
+        if(pct>=75){ pBar.className="text-emerald-500 transition-all duration-1000 drop-shadow-md"; fbk.textContent="ดีเยี่ยม! คุณมองกล้องได้อย่างมั่นใจและเป็นธรรมชาติ สิ่งนี้สร้าง First Impression ที่ดีมากกับกรรมการ"; }
+        else if(pct>=50){ pBar.className="text-amber-500 transition-all duration-1000 drop-shadow-md"; fbk.textContent="ทำได้ดีปานกลาง มีหลบสายตาบ้าง พยายามโฟกัสเลนส์กล้องแทนการมองหน้าจอเวลาพูด"; }
+        else { pBar.className="text-rose-500 transition-all duration-1000 drop-shadow-md"; fbk.textContent="คุณหลบสายตาค่อนข้างบ่อย อาจทำให้กรรมการรู้สึกว่าประหม่า หรือขาดความมั่นใจ ควรฝึกฝนเพิ่มครับ"; }
       } else {
-        document.getElementById('report-eye-label').textContent="โหมดเสียง"; lbl.textContent="N/A"; pBar.style.strokeDashoffset=0; pBar.className="text-blue-500 transition-all duration-1000";
-        fbk.textContent="ปิดการประเมินสายตา (ประเมินเฉพาะเนื้อหาเสียง)";
+        document.getElementById('report-eye-label').textContent="โหมดเสียง"; lbl.textContent="N/A"; pBar.style.strokeDashoffset=0; pBar.className="text-indigo-500/30 transition-all duration-1000";
+        fbk.textContent="ปิดการประเมินภาษากาย (โฟกัสเฉพาะเนื้อหาคำตอบด้วยเสียง)";
       }
-      document.getElementById('report-transcript').textContent = finalTranscript.trim() || "(ไม่มีเสียง)";
+      document.getElementById('report-transcript').textContent = finalTranscript.trim() || "(ไม่มีข้อมูลเสียง)";
       evaluateLLM(document.getElementById('current-question').textContent, finalTranscript);
     });
 
@@ -614,21 +712,19 @@
       document.getElementById('current-question').textContent = `"${currentQuestions[currentQuestionIndex]}"`;
     });
 
-    // ปุ่ม Restart ใหญ่สุด
+    // ปุ่ม Action ໃນหน้า Dashboard
     document.getElementById('btn-restart-interview').addEventListener('click', () => { location.reload(); });
-    
-    // ปุ่ม PDF จำลอง
-    document.getElementById('btn-download-pdf').addEventListener('click', () => { showToast("ฟีเจอร์นี้สงวนสิทธิ์เฉพาะแพ็กเกจ Pro เท่านั้น", "fa-lock"); });
+    document.getElementById('btn-download-pdf').addEventListener('click', () => { showToast("ฟีเจอร์โหลด PDF สงวนสิทธิ์เฉพาะสมาชิกระดับ PRO ขึ้นไป", "fa-lock"); });
 
-    function handleUpgradePlan(name) { showToast(`จำลองสั่งซื้อ ${name} สำเร็จ!`, "fa-crown"); try{confetti({particleCount:150, spread:100});}catch(e){} }
+    function handleUpgradePlan(name) { showToast(`จำลองการสั่งซื้อแพ็กเกจ ${name} สำเร็จ! ยินดีต้อนรับสู่ Premium`, "fa-crown"); try{confetti({particleCount:150, spread:100});}catch(e){} }
     
-    // API Modal
+    // API Modal Handlers
     const modal = document.getElementById('api-modal'), inp = document.getElementById('input-api-key');
     document.getElementById('btn-api-settings').addEventListener('click', () => { inp.value=activeApiKey; modal.classList.remove('hidden'); });
     document.getElementById('btn-close-modal').addEventListener('click', () => { modal.classList.add('hidden'); });
-    document.getElementById('btn-save-api').addEventListener('click', () => { activeApiKey=inp.value.trim(); localStorage.setItem("ai_mock_api_key",activeApiKey); modal.classList.add('hidden'); showToast("บันทึก API แล้ว", "fa-check"); });
+    document.getElementById('btn-save-api').addEventListener('click', () => { activeApiKey=inp.value.trim(); localStorage.setItem("ai_mock_api_key",activeApiKey); modal.classList.add('hidden'); showToast("บันทึกการตั้งค่า API แล้ว", "fa-check"); });
     
-    function showToast(m,i) { const t=document.getElementById('toast'); document.getElementById('toast-message').textContent=m; document.getElementById('toast-icon').className=`fa-solid ${i} text-indigo-400`; t.classList.remove('translate-y-20','opacity-0'); t.classList.add('translate-y-0','opacity-100'); setTimeout(()=>t.classList.add('translate-y-20','opacity-0'),3000); }
+    function showToast(m,i) { const t=document.getElementById('toast'); document.getElementById('toast-message').textContent=m; document.getElementById('toast-icon').className=`fa-solid ${i} text-white`; t.classList.remove('translate-y-20','opacity-0'); t.classList.add('translate-y-0','opacity-100'); setTimeout(()=>t.classList.add('translate-y-20','opacity-0'),3000); }
   </script>
 </body>
 </html>
