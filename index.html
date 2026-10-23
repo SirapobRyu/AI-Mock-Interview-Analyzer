@@ -12,15 +12,7 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81',
-            }
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' }
           },
           animation: {
             'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -30,7 +22,7 @@
     }
   </script>
 
-  <!-- Font Awesome สำหรับไอคอน -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Google Fonts (Prompt) -->
@@ -38,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-  <!-- MediaPipe Face Mesh & Camera Utils -->
+  <!-- MediaPipe -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 
@@ -46,19 +38,13 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    body {
-      font-family: 'Prompt', sans-serif;
-    }
-    .mirror {
-      transform: scaleX(-1);
-    }
+    body { font-family: 'Prompt', sans-serif; }
+    .mirror { transform: scaleX(-1); }
     @keyframes alertGlow {
       0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.85); }
       50% { box-shadow: 0 0 50px rgba(220, 38, 38, 1); }
     }
-    .alert-glow {
-      animation: alertGlow 1.2s infinite ease-in-out;
-    }
+    .alert-glow { animation: alertGlow 1.2s infinite ease-in-out; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
@@ -75,7 +61,6 @@
           <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Gemini AI Engine</span>
         </div>
       </div>
-
       <div class="flex items-center space-x-3">
         <button id="btn-api-settings" title="ตั้งค่า API Key" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center space-x-2">
           <i class="fa-solid fa-key text-amber-400"></i>
@@ -83,7 +68,7 @@
         </button>
         <div id="camera-status-pill" class="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-400">
           <span class="w-2.5 h-2.5 rounded-full bg-slate-500" id="camera-status-dot"></span>
-          <span id="camera-status-text">รอเปิดกล้อง</span>
+          <span id="camera-status-text">รอเปิดใช้งาน</span>
         </div>
       </div>
     </div>
@@ -92,26 +77,45 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-center">
 
     <!-- ==========================================
-         ส่วนที่ 1: หน้าเมนูเริ่มต้น (Start Menu)
+         ส่วนที่ 1: หน้าเมนูเริ่มต้น (Start Menu) 
+         (เพิ่มตัวเลือกการเปิดกล้อง/เสียง)
          ========================================== -->
     <div id="start-menu-section" class="max-w-xl mx-auto w-full bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
       <div class="w-20 h-20 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner border border-indigo-500/30">
         <i class="fa-solid fa-bullseye"></i>
       </div>
       <h1 class="text-3xl font-extrabold text-white mb-2">เตรียมตัวก่อนเริ่มสัมภาษณ์</h1>
-      <p class="text-slate-400 text-sm mb-8">เลือกเป้าหมายการสัมภาษณ์ของคุณเพื่อให้ระบบ AI กำหนดบริบทและประเมินผลได้ตรงจุดที่สุด</p>
+      <p class="text-slate-400 text-sm mb-6">เลือกเป้าหมายและรูปแบบการสัมภาษณ์ของคุณ</p>
       
-      <div class="space-y-4 text-left">
-        <label class="block text-sm font-semibold text-slate-300 ml-1">เลือกประเภทการสัมภาษณ์ของคุณ:</label>
-        <select id="select-purpose" class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
-          <option value="สัมภาษณ์เพื่อเข้าศึกษาต่อ คณะวิศวกรรมศาสตร์ ในระบบ TCAS">สอบเข้ามหาวิทยาลัย - คณะวิศวกรรมศาสตร์</option>
-          <option value="สัมภาษณ์เพื่อเข้าศึกษาต่อ คณะแพทยศาสตร์ ในระบบ TCAS">สอบเข้ามหาวิทยาลัย - คณะแพทยศาสตร์</option>
-          <option value="สัมภาษณ์ฝึกงาน ตำแหน่ง Software Developer">หาที่ฝึกงาน - Software Developer</option>
-          <option value="สัมภาษณ์งานจริง ตำแหน่ง IT Support / Automation">สมัครงาน - IT Support / Automation</option>
-          <option value="สัมภาษณ์งานทั่วไป (เน้นวัดทัศนคติและไหวพริบ)">สมัครงาน - ทั่วไป (General)</option>
-        </select>
+      <div class="space-y-5 text-left">
+        <!-- ตัวเลือกประเภทการสัมภาษณ์ -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 ml-1 mb-1.5">1. เลือกเป้าหมายการสัมภาษณ์:</label>
+          <select id="select-purpose" class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium focus:outline-none focus:border-indigo-500 shadow-inner">
+            <option value="สัมภาษณ์เพื่อเข้าศึกษาต่อ คณะวิศวกรรมศาสตร์ ในระบบ TCAS">สอบเข้ามหาวิทยาลัย - คณะวิศวกรรมศาสตร์</option>
+            <option value="สัมภาษณ์เพื่อเข้าศึกษาต่อ คณะแพทยศาสตร์ ในระบบ TCAS">สอบเข้ามหาวิทยาลัย - คณะแพทยศาสตร์</option>
+            <option value="สัมภาษณ์ฝึกงาน ตำแหน่ง Software Developer">หาที่ฝึกงาน - Software Developer</option>
+            <option value="สัมภาษณ์งานจริง ตำแหน่ง IT Support / Automation">สมัครงาน - IT Support / Automation</option>
+            <option value="สัมภาษณ์งานทั่วไป (เน้นวัดทัศนคติและไหวพริบ)">สมัครงาน - ทั่วไป (General)</option>
+          </select>
+        </div>
+
+        <!-- ตัวเลือก เปิดกล้อง หรือ เสียงอย่างเดียว -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 ml-1 mb-1.5">2. รูปแบบการใช้งาน:</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="flex items-center p-3.5 border border-slate-700 rounded-xl cursor-pointer hover:bg-slate-800 transition bg-slate-950/50">
+              <input type="radio" name="media-mode" value="video" checked class="form-radio h-4 w-4 text-indigo-600 bg-slate-900 border-slate-600">
+              <span class="ml-2 text-sm text-slate-300">เปิดกล้อง (ประเมินภาษากาย)</span>
+            </label>
+            <label class="flex items-center p-3.5 border border-slate-700 rounded-xl cursor-pointer hover:bg-slate-800 transition bg-slate-950/50">
+              <input type="radio" name="media-mode" value="audio" class="form-radio h-4 w-4 text-indigo-600 bg-slate-900 border-slate-600">
+              <span class="ml-2 text-sm text-slate-300">เสียงอย่างเดียว (ไม่เปิดกล้อง)</span>
+            </label>
+          </div>
+        </div>
         
-        <button id="btn-enter-room" class="w-full mt-6 px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 active:translate-y-0">
+        <button id="btn-enter-room" class="w-full mt-2 px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 active:translate-y-0">
           <span>เข้าสู่ห้องสัมภาษณ์</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -123,7 +127,6 @@
          ========================================== -->
     <div id="interview-section" class="hidden space-y-6">
       
-      <!-- กล่องข้อความแสดงคำถามจำลอง -->
       <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="space-y-1">
@@ -143,23 +146,22 @@
         </div>
       </div>
 
-      <!-- พื้นที่แสดงผลวิดีโอจากกล้อง Webcam + MediaPipe Canvas -->
       <div class="relative w-full aspect-video sm:h-[460px] md:h-[520px] bg-black rounded-3xl overflow-hidden border-2 border-slate-800 shadow-2xl flex items-center justify-center">
         
-        <video id="webcam" autoplay playsinline muted class="mirror w-full h-full object-cover"></video>
-        <canvas id="output-canvas" class="mirror absolute inset-0 w-full h-full pointer-events-none"></canvas>
+        <!-- Video Feed & Canvas -->
+        <video id="webcam" autoplay playsinline muted class="mirror w-full h-full object-cover hidden"></video>
+        <canvas id="output-canvas" class="mirror absolute inset-0 w-full h-full pointer-events-none hidden"></canvas>
 
         <div id="video-placeholder" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center p-6 text-center space-y-4">
-          <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl animate-pulse">
+          <div id="placeholder-icon" class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl animate-pulse">
             <i class="fa-solid fa-video"></i>
           </div>
           <div class="space-y-1">
-            <h3 class="text-lg font-semibold text-white">กำลังขอสิทธิ์เข้าถึงกล้องเว็บแคมและไมโครโฟน...</h3>
-            <p class="text-sm text-slate-400 max-w-md">ระบบประมวลผลบนเครื่องของคุณ 100% ปกป้องข้อมูลส่วนบุคคล</p>
+            <h3 id="placeholder-title" class="text-lg font-semibold text-white">กำลังขอสิทธิ์เข้าถึงอุปกรณ์...</h3>
+            <p id="placeholder-desc" class="text-sm text-slate-400 max-w-md">ระบบประมวลผลบนเครื่องของคุณ 100% ปกป้องข้อมูลส่วนบุคคล</p>
           </div>
         </div>
 
-        <!-- แจ้งเตือนมองกล้อง -->
         <div id="eye-warning" class="hidden absolute top-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 alert-glow border-2 border-red-300 z-30 transition-all duration-300 animate-bounce">
           <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
             <i class="fa-solid fa-triangle-exclamation text-xl text-white"></i>
@@ -170,7 +172,6 @@
           </div>
         </div>
 
-        <!-- HUD Bar: สถานะการมองกล้อง & เวลา -->
         <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-20">
           <div id="hud-gaze-status" class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/80 text-xs font-medium flex items-center space-x-2 text-slate-300 shadow-lg">
             <span id="gaze-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
@@ -182,9 +183,6 @@
           </div>
         </div>
 
-        <!-- ==========================================
-             กล่องซับไตเติลแปลงคำพูด (Speech-to-Text) 
-             ========================================== -->
         <div class="absolute bottom-6 left-4 right-4 z-20 pointer-events-none text-center flex flex-col items-center">
           <div id="speech-status-pill" class="mb-2 text-[10px] px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-slate-300 backdrop-blur-sm shadow-sm flex items-center space-x-2 hidden">
             <i id="mic-icon" class="fa-solid fa-microphone-slash"></i>
@@ -194,10 +192,8 @@
             (กดปุ่ม "เริ่มสัมภาษณ์" ระบบจะแปลเสียงพูดของคุณที่นี่)
           </p>
         </div>
-
       </div>
 
-      <!-- ปุ่มควบคุมการสัมภาษณ์ -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
         <button id="btn-start-interview" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-base shadow-xl shadow-emerald-900/40 hover:shadow-emerald-700/50 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2.5">
           <i class="fa-solid fa-play"></i>
@@ -222,7 +218,7 @@
           <span>การสัมภาษณ์เสร็จสิ้นสมบูรณ์</span>
         </div>
         <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">รายงานสรุปผลการจำลองสัมภาษณ์</h1>
-        <p class="text-slate-400 text-sm max-w-xl mx-auto">ผลวิเคราะห์ภาษากาย (MediaPipe Face Mesh) และการประเมินเนื้อหาคำตอบด้วย Gemini AI</p>
+        <p class="text-slate-400 text-sm max-w-xl mx-auto">ผลวิเคราะห์การสัมภาษณ์และการประเมินเนื้อหาคำตอบด้วย Gemini AI</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -252,7 +248,7 @@
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                   <span id="report-eye-percentage" class="text-4xl font-extrabold text-white">0%</span>
-                  <span class="text-xs text-slate-400">เวลามองกล้อง</span>
+                  <span class="text-xs text-slate-400" id="report-eye-label">เวลามองกล้อง</span>
                 </div>
               </div>
             </div>
@@ -262,7 +258,7 @@
                 <i class="fa-solid fa-lightbulb text-amber-400"></i>
                 <span>คำแนะนำด้านภาษากาย</span>
               </div>
-              <p id="report-eye-feedback" class="text-xs text-slate-400 leading-relaxed">กำลังประมวลผลข้อมูลการสบตา...</p>
+              <p id="report-eye-feedback" class="text-xs text-slate-400 leading-relaxed">กำลังประมวลผลข้อมูล...</p>
             </div>
           </div>
           <div class="mt-4 pt-4 border-t border-slate-800/80 flex justify-between text-xs text-slate-400">
@@ -271,7 +267,7 @@
           </div>
         </div>
 
-        <!-- 2. การ์ดผลการตอบคำถาม (Gemini AI Evaluator Score) -->
+        <!-- 2. การ์ดผลการตอบคำถาม -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl flex flex-col justify-between relative overflow-hidden">
           <div class="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
           <div>
@@ -404,9 +400,7 @@
           <i class="fa-solid fa-key text-amber-400"></i>
           <span>ตั้งค่า Gemini API Key</span>
         </h3>
-        <button id="btn-close-modal" class="text-slate-400 hover:text-white text-lg">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <button id="btn-close-modal" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p class="text-xs text-slate-400 leading-relaxed">
         เพื่อให้ AI ตรวจคำตอบได้ กรุณาใส่ Gemini API Key (ฟรี) ขอรับได้ที่ Google AI Studio หากไม่ใส่ ระบบจะมีจำลองการประเมินแบบออฟไลน์ให้ทดสอบแทน
@@ -431,10 +425,11 @@
 
   <script>
     // ==========================================
-    // ตัวแปรเก็บเป้าหมายการสัมภาษณ์
+    // State ตัวแปรต่างๆ
     // ==========================================
     let currentInterviewPurpose = "";
     let activeApiKey = localStorage.getItem("ai_mock_api_key") || "";
+    let useCameraMode = true; // True = เปิดกล้อง, False = เสียงอย่างเดียว
 
     const SAMPLE_QUESTIONS = [
       { text: "ทำไมถึงอยากเข้าเรียนคณะ/สาขานี้ หรือสนใจตำแหน่งนี้?", faculty: "ความตั้งใจ" },
@@ -449,12 +444,12 @@
     let faceMeshInstance = null;
     let cameraInstance = null;
 
-    let totalInterviewTimeSec = 0;
-    let totalLookedTimeSec = 0;
+    let interviewSeconds = 0; // จับเวลาสัมภาษณ์รวม
+    let totalInterviewTimeSec = 0; // ใช้สำหรับคำนวณกล้อง (วินาที)
+    let totalLookedTimeSec = 0; 
     let consecutiveNotLookedSec = 0;
     let lastFrameTimestamp = null;
     let interviewTimerInterval = null;
-    let isCurrentlyLooking = false;
 
     let speechRecognition = null;
     let finalTranscript = "";
@@ -466,7 +461,11 @@
     
     const interviewSection = document.getElementById('interview-section');
     const webcamVideo = document.getElementById('webcam');
+    const outputCanvas = document.getElementById('output-canvas');
     const videoPlaceholder = document.getElementById('video-placeholder');
+    const placeholderIcon = document.getElementById('placeholder-icon');
+    const placeholderTitle = document.getElementById('placeholder-title');
+    const placeholderDesc = document.getElementById('placeholder-desc');
     const cameraStatusDot = document.getElementById('camera-status-dot');
     const cameraStatusText = document.getElementById('camera-status-text');
     const eyeWarning = document.getElementById('eye-warning');
@@ -508,10 +507,25 @@
     // ==========================================
     btnEnterRoom.addEventListener('click', () => {
       currentInterviewPurpose = selectPurpose.value;
+      useCameraMode = document.querySelector('input[name="media-mode"]:checked').value === 'video';
+
       startMenuSection.classList.add('hidden');
       interviewSection.classList.remove('hidden');
       questionBadgeEl.textContent = "เป้าหมาย: " + currentInterviewPurpose.split(" ")[0];
-      initWebcam();
+      
+      if (useCameraMode) {
+        initWebcam();
+      } else {
+        // Setup สำหรับโหมดเสียงอย่างเดียว (ไม่เปิดกล้อง)
+        cameraStatusDot.className = "w-2.5 h-2.5 rounded-full bg-blue-500";
+        cameraStatusText.textContent = "โหมดเสียงอย่างเดียว";
+        gazeStatusLabel.textContent = "ปิดการวิเคราะห์สายตา";
+        
+        placeholderIcon.className = "w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-2xl";
+        placeholderIcon.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+        placeholderTitle.textContent = "โหมดสัมภาษณ์ด้วยเสียง (ปิดกล้อง)";
+        placeholderDesc.textContent = "ระบบจะวิเคราะห์เนื้อหาคำตอบและน้ำเสียงเท่านั้น โดยข้ามการให้คะแนนภาษากาย";
+      }
     });
 
     async function initWebcam() {
@@ -526,6 +540,8 @@
 
         webcamVideo.onloadedmetadata = () => {
           webcamVideo.play();
+          webcamVideo.classList.remove('hidden');
+          outputCanvas.classList.remove('hidden');
           videoPlaceholder.classList.add('hidden');
           cameraStatusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
           cameraStatusText.textContent = "กล้องพร้อมใช้งาน";
@@ -534,7 +550,7 @@
       } catch (err) {
         cameraStatusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
         cameraStatusText.textContent = "ไม่ได้รับสิทธิ์กล้อง";
-        showToast("กรุณาอนุญาตกล้องเพื่อเริ่มใช้งาน", "fa-triangle-exclamation");
+        showToast("เปิดกล้องไม่ได้ กรุณาอนุญาตกล้องหรือรีเฟรชเลือก 'เสียงอย่างเดียว'", "fa-triangle-exclamation");
       }
     }
 
@@ -549,7 +565,7 @@
 
       cameraInstance = new Camera(webcamVideo, {
         onFrame: async () => {
-          if (webcamVideo.readyState >= 2) await faceMeshInstance.send({ image: webcamVideo });
+          if (webcamVideo.readyState >= 2 && useCameraMode) await faceMeshInstance.send({ image: webcamVideo });
         },
         width: 1280, height: 720
       });
@@ -557,6 +573,7 @@
     }
 
     function onFaceMeshResults(results) {
+      if (!useCameraMode) return;
       const now = performance.now();
       const dt = lastFrameTimestamp ? (now - lastFrameTimestamp) / 1000 : 0.033;
       lastFrameTimestamp = now;
@@ -571,7 +588,6 @@
         const noseRelativeY = (nose.y - forehead.y) / (faceHeight || 0.001);
 
         const isLookingForward = (yawOffset < 0.22) && (noseRelativeY >= 0.38 && noseRelativeY <= 0.72);
-        isCurrentlyLooking = isLookingForward;
 
         if (isInterviewActive) {
           totalInterviewTimeSec += dt;
@@ -589,7 +605,6 @@
           updateLiveGazeStatus(isLookingForward);
         }
       } else {
-        isCurrentlyLooking = false;
         if (isInterviewActive) {
           totalInterviewTimeSec += dt;
           consecutiveNotLookedSec += dt;
@@ -600,6 +615,7 @@
     }
 
     function updateLiveGazeStatus(isLooking, customLabel = null) {
+      if (!useCameraMode) return;
       if (!isInterviewActive && !customLabel) {
         gazeIndicatorDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
         gazeStatusLabel.textContent = "รอเริ่มสัมภาษณ์";
@@ -631,10 +647,9 @@
     function initSpeechRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        transcriptPreview.textContent = "เบราว์เซอร์ไม่รองรับระบบเสียง (แนะนำให้ใช้ Google Chrome)";
+        transcriptPreview.textContent = "เบราว์เซอร์ไม่รองรับระบบเสียง (แนะนำให้ใช้ Safari หรือ Chrome บนมือถือ)";
         return null;
       }
-
       const recognition = new SpeechRecognition();
       recognition.lang = 'th-TH';
       recognition.continuous = true;
@@ -646,7 +661,6 @@
         micStatusText.textContent = "กำลังฟัง...";
         transcriptPreview.classList.remove('opacity-80');
       };
-
       recognition.onresult = (event) => {
         let interimText = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -655,11 +669,9 @@
         }
         transcriptPreview.textContent = finalTranscript + interimText || "(กำลังประมวลผลเสียง...)";
       };
-
       recognition.onend = () => {
-        if (isInterviewActive) {
-          try { recognition.start(); } catch (e) {}
-        } else {
+        if (isInterviewActive) { try { recognition.start(); } catch (e) {} } 
+        else {
           micIcon.className = "fa-solid fa-microphone-slash text-slate-500";
           micStatusText.textContent = "ไมโครโฟนปิดอยู่";
           transcriptPreview.classList.add('opacity-80');
@@ -679,7 +691,7 @@
         llmLoadingBadge.classList.add('hidden');
         reportLlmScore.textContent = "0";
         reportLlmScore.className = "text-3xl font-black text-rose-500";
-        reportLlmFeedback.textContent = "ไม่พบการตอบคำถาม กรุณาลองใหม่อีกครั้ง";
+        reportLlmFeedback.textContent = "ไม่พบการตอบคำถาม (กรุณาอนุญาตไมโครโฟนและพูดตอบให้ชัดเจน)";
         return;
       }
 
@@ -738,7 +750,10 @@
     // ==========================================
     btnStartInterview.addEventListener('click', () => {
       isInterviewActive = true;
-      totalInterviewTimeSec = totalLookedTimeSec = consecutiveNotLookedSec = 0;
+      interviewSeconds = 0;
+      totalInterviewTimeSec = 0;
+      totalLookedTimeSec = 0;
+      consecutiveNotLookedSec = 0;
       finalTranscript = "";
       transcriptPreview.textContent = "";
       eyeWarning.classList.add('hidden');
@@ -748,12 +763,11 @@
       btnEndInterview.disabled = false;
       btnEndInterview.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 text-white font-bold shadow-xl flex items-center justify-center space-x-2.5 animate-pulse-fast";
 
-      let seconds = 0;
       timerDisplay.textContent = "00:00";
       clearInterval(interviewTimerInterval);
       interviewTimerInterval = setInterval(() => {
-        seconds++;
-        timerDisplay.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+        interviewSeconds++;
+        timerDisplay.textContent = `${String(Math.floor(interviewSeconds / 60)).padStart(2, '0')}:${String(interviewSeconds % 60).padStart(2, '0')}`;
       }, 1000);
 
       if (!speechRecognition) speechRecognition = initSpeechRecognition();
@@ -766,23 +780,41 @@
       eyeWarning.classList.add('hidden');
       if (speechRecognition) { try { speechRecognition.stop(); } catch (e) {} }
 
+      // ปิดกล้องถ้ามีการเปิดใช้กล้อง
+      if (cameraStream && useCameraMode) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+
       interviewSection.classList.add('hidden');
       dashboardSection.classList.remove('hidden');
       try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); } catch (e) {}
 
-      const effectiveTotalTime = Math.max(totalInterviewTimeSec, 1);
-      const eyePercentage = Math.min(100, Math.round((totalLookedTimeSec / effectiveTotalTime) * 100));
+      // แสดงผลคะแนนใน Dashboard
+      if (useCameraMode) {
+        const effectiveTotalTime = Math.max(totalInterviewTimeSec, 1);
+        const eyePercentage = Math.min(100, Math.round((totalLookedTimeSec / effectiveTotalTime) * 100));
 
-      reportEyePercentage.textContent = `${eyePercentage}%`;
-      reportTotalTime.textContent = `${Math.round(totalInterviewTimeSec)} วินาที`;
-      reportLookedTime.textContent = `${Math.round(totalLookedTimeSec)} วินาที`;
+        reportEyePercentage.textContent = `${eyePercentage}%`;
+        reportTotalTime.textContent = `${interviewSeconds} วินาที`;
+        reportLookedTime.textContent = `${Math.round(totalLookedTimeSec)} วินาที`;
+        circleProgress.style.strokeDashoffset = (2 * Math.PI * 40) * (1 - eyePercentage / 100);
 
-      const offset = (2 * Math.PI * 40) * (1 - eyePercentage / 100);
-      circleProgress.style.strokeDashoffset = offset;
-
-      if (eyePercentage >= 75) { circleProgress.className = "text-emerald-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "รักษาการสบตาได้ดีเยี่ยม แสดงถึงความมั่นใจสูง"; }
-      else if (eyePercentage >= 50) { circleProgress.className = "text-amber-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "สบตาได้ดีปานกลาง พยายามลดการหลบสายตาลงอีกนิด"; }
-      else { circleProgress.className = "text-rose-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "สบตาน้อยเกินไป ควรฝึกมองกล้องเพื่อเพิ่มความน่าเชื่อถือ"; }
+        if (eyePercentage >= 75) { circleProgress.className = "text-emerald-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "รักษาการสบตาได้ดีเยี่ยม แสดงถึงความมั่นใจสูง"; }
+        else if (eyePercentage >= 50) { circleProgress.className = "text-amber-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "สบตาได้ดีปานกลาง พยายามลดการหลบสายตาลงอีกนิด"; }
+        else { circleProgress.className = "text-rose-500 transition-all duration-1000 ease-out"; reportEyeFeedback.textContent = "สบตาน้อยเกินไป ควรฝึกมองกล้องเพื่อเพิ่มความน่าเชื่อถือ"; }
+      } else {
+        // อัปเดต Dashboard กรณีโหมดเสียงเท่านั้น
+        document.getElementById('report-eye-label').textContent = "โหมดเสียง";
+        reportEyePercentage.textContent = "N/A";
+        reportTotalTime.textContent = `${interviewSeconds} วินาที`;
+        reportLookedTime.textContent = "-";
+        
+        circleProgress.style.strokeDashoffset = 0;
+        circleProgress.className = "text-blue-500 transition-all duration-1000 ease-out";
+        gazeRatingBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30";
+        gazeRatingBadge.textContent = "ปิดระบบจับใบหน้า";
+        reportEyeFeedback.textContent = "คุณเลือกซ้อมสัมภาษณ์ด้วยเสียงเพียงอย่างเดียว ระบบจึงข้ามการประเมินภาษากายและการสบตาในรอบนี้ไป";
+      }
 
       reportTranscript.textContent = finalTranscript.trim() || "(ไม่มีเสียงตอบรับ)";
       evaluateAnswerWithLLM(currentQuestionEl.textContent, finalTranscript);
@@ -794,16 +826,8 @@
     });
 
     btnRestartInterview.addEventListener('click', () => {
-      dashboardSection.classList.add('hidden');
-      interviewSection.classList.remove('hidden');
-      currentQuestionIndex = (currentQuestionIndex + 1) % SAMPLE_QUESTIONS.length;
-      currentQuestionEl.textContent = `"${SAMPLE_QUESTIONS[currentQuestionIndex].text}"`;
-      
-      btnStartInterview.disabled = false;
-      btnStartInterview.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold shadow-xl flex items-center justify-center space-x-2.5";
-      btnEndInterview.disabled = true;
-      btnEndInterview.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-800 text-slate-500 font-bold border border-slate-700 cursor-not-allowed flex items-center justify-center space-x-2.5";
-      timerDisplay.textContent = "00:00";
+      // โหลดหน้าใหม่ทั้งหมด เพื่อกลับไปหน้าเลือกโหมดใหม่และคืนค่ากล้อง
+      location.reload();
     });
 
     function handleUpgradePlan(planName) { showToast(`จำลองการสั่งซื้อแพ็กเกจ ${planName} สำเร็จ!`, "fa-crown"); try { confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } }); } catch (e) {} }
